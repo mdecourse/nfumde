@@ -140,6 +140,7 @@ def timeTable():
 </tr>
 </tbody>
 </table>
+<br /> 程式碼: <a href="https://github.com/mdecourse/nfumde">https://github.com/mdecourse/nfumde</a>
     '''
     
 # 修改步驟 4/6 , 因為改寫為網際程式後, 下列將內容存檔並自動呼叫 Firefox 的程式碼不再適用, 必須蓋掉
