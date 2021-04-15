@@ -15,12 +15,15 @@ app = Flask(__name__)
 CORS(app)
 
 # for pythn 3.9,  在近端測試時仍需要設定 proxy, 若使用 Python 3.8 執行則會自動使用系統的 Proxy 設定
+# 推向 Heroku 之前必須將 proxy 蓋掉
+'''
 proxy = 'http://[2001:288:6004:17::69]:3128'
 
 os.environ['http_proxy'] = proxy 
 os.environ['HTTP_PROXY'] = proxy
 os.environ['https_proxy'] = proxy
 os.environ['HTTPS_PROXY'] = proxy
+'''
 '''
 url:  'jclassroom_ajax.php',
 data: { pselyr: pselyr, pselclssroom: pselclssroom },
