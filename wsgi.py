@@ -1,15 +1,18 @@
+# 導入 requsts 模組
 import requests
+# 導入 bs4 模組
 import bs4
 # for os.environ and os.system
 import os
 # for geting html file path
 import pathlib
-# 以下因應改為 Heroku based 程式所需導入模組,  修改步驟 1/6
+# 以下因應改為 Heroku based 程式所需導入模組,  修改步驟 1/6 -----
 from flask import Flask, request 
+# 為了讓網際程式可以跨網域擷取資料, 導入 flsk_cors 中的 CORS 類別
 from flask_cors import CORS
 
 
-# 修改步驟 2/6 , 加入 Flask 相關物件設定
+# 修改步驟 2/6 , 加入 Flask 相關物件設定 ------
 app = Flask(__name__)
 # 此一設定可以讓程式跨網域擷取資料
 CORS(app)
@@ -29,7 +32,7 @@ url:  'jclassroom_ajax.php',
 data: { pselyr: pselyr, pselclssroom: pselclssroom },
 '''
 
-# 修改步驟 3/6, 試著將程式改為網際模式, 需要套用 Flask 的網際 decorator
+# 修改步驟 3/6, 試著將程式改為網際模式, 需要套用 Flask 的網際 decorator ------
 @app.route('/')
 def timeTableList():
     # 修改步驟 7/6, 為了讓使用者可以透過網際 GET 設定以下兩個變數, 必須先蓋掉原先直接設定學期與實驗室代號的部分, 改為透過 request 取得
@@ -53,23 +56,31 @@ def timeTableList():
     classroomno = 'BGA0810'
     column = True
     '''
+    # 利用 flask 導入的 request 物件的 args 中的 get 方法取 semester 與 classroomno 等變數
     semester = request.args.get('semester')
     classroomno = request.args.get('classroomno')
 
+    # 若使用者並無輸入 GET 變數, 則設為內定值
     if semester == None:
         semester = '1092'
     if classroomno == None:
         # BGA0810 電腦輔助設計室
         classroomno = 'BGA0810'
     #print(semester, classroomno)
-        
+    
+    # 採用內定的 AJAX 標頭 dict
     headers = {'X-Requested-With': 'XMLHttpRequest'}
 
+    # 設定校務主機中用來擷取教室排課的程式
     url = 'https://qry.nfu.edu.tw/jclassroom_ajax.php'
+    # 配合主機中的變數名稱進行設定
+    # pselyr 與 pselclssroom 由校主機決定, semester 與 classroomno 可自訂
     post_var = {'pselyr': semester, 'pselclssroom': classroomno}
 
+    # 利用 POST 送出資料進行查詢
     result = requests.post(url, data = post_var, headers = headers)
 
+    # 利用 bs4 中的 BeautifulSoup 方法解讀查詢內容
     soup = bs4.BeautifulSoup(result.content, 'lxml')
 
     # 先除掉所有 anchor
@@ -82,6 +93,9 @@ def timeTableList():
     # 根據輸出設定, 取出 class='tbcls' 的 table 資料
     table = soup.find('table', {'class': 'tbcls'})
 
+    # 為了取得實驗室排課表中各時段所排的課程, 需要對 table 加以進一步解讀
+    # 先回歸到單機程式進行測試
+    
     # ########## 以下程式碼用來計算排課節數 ##########
     # 以下取出 td 標註資料
     table_data = [i.text for i in table.find_all('td')]
