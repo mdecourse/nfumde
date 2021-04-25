@@ -342,6 +342,8 @@ import os
 import pathlib
 import re
 
+# 為了讓程式能夠同時在 Leo Editor 與 SciTE 中執行列印
+# 特別建立 leoprint 函式
 # *args 表示 leoprint 可以接受任意數量的輸入變數
 def leoprint(*args):
     try:
